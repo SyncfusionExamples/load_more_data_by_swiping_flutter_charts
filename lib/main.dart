@@ -31,10 +31,9 @@ class MyHomePageState extends State<MyHomePage> {
   MyHomePageState();
 
   GlobalKey<State> _globalKey = GlobalKey<State>();
-  ChartSeriesController<ChartData, num>? _seriesController;
-  final ScrollController _scrollController = ScrollController();
+  ChartSeriesController<_ChartData, num>? _seriesController;
   late ZoomPanBehavior _zoomPanBehavior;
-  late List<ChartData> _chartData;
+  late List<_ChartData> _chartData;
   bool _isLoadMoreView = false;
   bool _isNeedToUpdateView = false;
   bool _isDataUpdated = true;
@@ -43,16 +42,16 @@ class MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    _chartData = <ChartData>[
-      ChartData(x: 0, y: 326),
-      ChartData(x: 1, y: 416),
-      ChartData(x: 2, y: 290),
-      ChartData(x: 3, y: 70),
-      ChartData(x: 4, y: 500),
-      ChartData(x: 5, y: 416),
-      ChartData(x: 6, y: 290),
-      ChartData(x: 7, y: 120),
-      ChartData(x: 8, y: 500),
+    _chartData = <_ChartData>[
+      _ChartData(x: 0, y: 326),
+      _ChartData(x: 1, y: 416),
+      _ChartData(x: 2, y: 290),
+      _ChartData(x: 3, y: 70),
+      _ChartData(x: 4, y: 500),
+      _ChartData(x: 5, y: 416),
+      _ChartData(x: 6, y: 290),
+      _ChartData(x: 7, y: 120),
+      _ChartData(x: 8, y: 500),
     ];
     _zoomPanBehavior = ZoomPanBehavior(enablePanning: true);
     super.initState();
@@ -109,13 +108,13 @@ class MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  List<CartesianSeries<ChartData, num>> _buildSeries() {
+  List<CartesianSeries<_ChartData, num>> _buildSeries() {
     const Color color = Color.fromARGB(255, 13, 157, 35);
-    return <CartesianSeries<ChartData, num>>[
-      SplineAreaSeries<ChartData, num>(
+    return <CartesianSeries<_ChartData, num>>[
+      SplineAreaSeries<_ChartData, num>(
         dataSource: _chartData,
-        xValueMapper: (ChartData data, int index) => data.x!,
-        yValueMapper: (ChartData data, int index) => data.y!,
+        xValueMapper: (_ChartData data, int index) => data.x!,
+        yValueMapper: (_ChartData data, int index) => data.y!,
         borderColor: color,
         gradient: LinearGradient(
           colors: <Color>[color.withOpacity(0.3), Colors.white],
@@ -123,7 +122,7 @@ class MyHomePageState extends State<MyHomePage> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
-        onRendererCreated: (ChartSeriesController<ChartData, num> controller) {
+        onRendererCreated: (ChartSeriesController<_ChartData, num> controller) {
           _seriesController = controller;
         },
       ),
@@ -185,7 +184,7 @@ class MyHomePageState extends State<MyHomePage> {
 
   void _updateData() {
     for (int i = 0; i < 4; i++) {
-      _chartData.add(ChartData(
+      _chartData.add(_ChartData(
         x: _chartData[_chartData.length - 1].x! + 1,
         y: _randomInt(0, 600),
       ));
@@ -212,8 +211,9 @@ class MyHomePageState extends State<MyHomePage> {
   List<int> _indexes(int length) {
     final List<int> indexes = <int>[];
     final int lastIndex = length - 1;
+    final int dataLastIndex = _chartData.length - 1;
     for (int i = lastIndex; i >= 0; i--) {
-      indexes.add(_chartData.length - 1 - i);
+      indexes.add(dataLastIndex - i);
     }
     return indexes;
   }
@@ -227,13 +227,12 @@ class MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     _seriesController = null;
-    _scrollController.dispose();
     super.dispose();
   }
 }
 
-class ChartData {
-  ChartData({this.x, this.y});
+class _ChartData {
+  _ChartData({this.x, this.y});
   num? x;
   num? y;
 }
